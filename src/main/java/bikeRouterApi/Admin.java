@@ -2,7 +2,6 @@ package bikeRouterApi;
 
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.OPTIONS;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -20,16 +19,16 @@ public class Admin {
 	}
 
 	private Response addCorsHeaders(Response.ResponseBuilder responseBuilder) {
-		return responseBuilder.header("Access-Control-Allow-Origin", "*")
+		return responseBuilder.header("Access-Control-Allow-Origin", "http://localhost:3000")
 				.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
 				.header("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept")
 				.build();
 	}
 
-	@OPTIONS
-	@Path("{path:.*}")
-	public Response options() {
-		return addCorsHeaders(Response.ok());
+	private Response addCorsHeadersJSON(Response.ResponseBuilder responseBuilder) {
+		return responseBuilder.header("Access-Control-Allow-Origin", "http://localhost:3000")
+				.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
+				.header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
 
 	@Path("signup/")
@@ -78,5 +77,25 @@ public class Admin {
 
 		}
 	}
+
+//	@Path("saveRoute/")
+//	@POST
+//	@Produces(MediaType.APPLICATION_JSON)
+////	@Consumes(MediaType.APPLICATION_JSON)
+////	public Response saveRoute(SaveRouteBody body) {
+//	public Response saveRoute() {
+//		return addCorsHeadersJSON(Response.ok());
+////		User user = md.getUserById(body.getUserId());
+////		if (user != null) {
+////			Route route = body.getRoute();
+////			user.addRoute(route.getId(), route.getName());
+////			Response.ResponseBuilder responseBuilder = Response.ok("Route added.");
+////			return addCorsHeaders(responseBuilder);
+////		} else {
+////			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.NOT_FOUND)
+////					.entity("User not found");
+////			return addCorsHeaders(responseBuilder);
+////		}
+//	}
 
 }
