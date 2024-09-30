@@ -1,11 +1,12 @@
 package bikeRouterApi;
 
-import bikeRouterApi.MockDatabase.User;
 import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.OPTIONS;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -54,6 +55,25 @@ public class Admin {
 		} else {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.UNAUTHORIZED)
 					.entity("Invalid credentials");
+			return addCorsHeaders(responseBuilder);
+
+		}
+	}
+
+	@Path("user/")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response login(@QueryParam("userId") int userId) {
+
+		User user = md.getUserById(userId);
+
+		if (user != null) {
+			UserResponse jsonResponse = new UserResponse("User found.", user);
+			Response.ResponseBuilder responseBuilder = Response.ok(jsonResponse);
+			return addCorsHeaders(responseBuilder);
+		} else {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.NOT_FOUND)
+					.entity("User not found with id " + userId);
 			return addCorsHeaders(responseBuilder);
 
 		}

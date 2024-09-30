@@ -1,6 +1,5 @@
 package bikeRouterApi;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +28,7 @@ public class MockDatabase {
 
 	public User getUserByName(String username) {
 		for (Map.Entry<Integer, User> entry : usersTable.entrySet()) {
-			if (entry.getValue().username.equals(username)) {
+			if (entry.getValue().getUsername().equals(username)) {
 				return entry.getValue();
 			}
 		}
@@ -37,7 +36,9 @@ public class MockDatabase {
 	}
 
 	public User getUserById(int id) {
-		return usersTable.get(id);
+		if (usersTable.containsKey(id))
+			return usersTable.get(id);
+		return null;
 	}
 
 	public void addUser(User user) {
@@ -56,94 +57,12 @@ public class MockDatabase {
 		routesTable.put(route.getId(), route);
 	}
 
-	public void addRouteIdToUser(int userId, int routeId) {
-		usersTable.get(userId).addRouteId(routeId);
+	public void addRouteIdToUser(int userId, int routeId, String routeName) {
+		usersTable.get(userId).addRoute(routeId, routeName);
 	}
 
-	public void removeRouteIdFromUser(int userId, int routeId) {
-		usersTable.get(userId).removeRouteId(routeId);
+	public void removeRouteIdFromUser(int userId, int routeId, String routeName) {
+		usersTable.get(userId).removeRoute(routeId, routeName);
 	}
 
-	public static class User {
-		private static int nextId = 1;
-		private int id;
-		private String username;
-		private String password;
-		private ArrayList<Integer> routeIds;
-
-		public User() {
-		};
-
-		public User(String username, String password) {
-			this.id = nextId++;
-			this.username = username;
-			this.password = password;
-			this.routeIds = new ArrayList<>();
-		}
-
-		public int getId() {
-			return id;
-		}
-
-		public String getUsername() {
-			return username;
-		}
-
-		public String getPassword() {
-			return password;
-		}
-
-		public ArrayList<Integer> getRouteIds() {
-			return routeIds;
-		}
-
-		public void setUsername(String username) {
-			this.username = username;
-		}
-
-		public void setPassword(String password) {
-			this.password = password;
-		}
-
-		public void addRouteId(int id) {
-			this.routeIds.add(id);
-		}
-
-		public void removeRouteId(int id) {
-			this.routeIds.remove(id);
-		}
-
-		@Override
-		public String toString() {
-			return "User{id=" + id + ", username='" + username + "', password='" + password + "'}";
-		}
-	}
-
-	public static class Route {
-		private static int nextId = 1;
-		private int id;
-		private String name;
-
-		public Route(String name) {
-			this.id = nextId++;
-			this.name = name;
-		}
-
-		public int getId() {
-			return id;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		@Override
-		public String toString() {
-			return "Route{id=" + id + ", name='" + name + "'}";
-		}
-	}
 }
