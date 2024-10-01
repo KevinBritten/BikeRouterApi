@@ -1,6 +1,7 @@
 package bikeRouterApi;
 
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -9,10 +10,10 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("routes")
-public class Routes {
+public class RoutesResource {
 	private MockDatabase md;
 
-	public Routes() {
+	public RoutesResource() {
 		md = MockDatabase.getInstance();
 	}
 
@@ -26,10 +27,12 @@ public class Routes {
 	@Path("addRoute/")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addRoute(@QueryParam("userId") int userId, @QueryParam("routeName") String routeName) {
-		User user = md.getUserById(userId);
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response addRoute(AddRouteBody body) {
+		User user = md.getUserById(body.getUserId());
 		if (user != null) {
-			Route route = new Route(routeName);
+			Route route = body.getRoute();
+			md.addRoute(route);
 			user.addRoute(route.getId(), route.getName());
 			Response.ResponseBuilder responseBuilder = Response.ok("Route added.");
 			return addCorsHeaders(responseBuilder);
@@ -40,20 +43,17 @@ public class Routes {
 		}
 	}
 
-	@Path("saveRoute/")
-	@POST
+	@Path("getRoute")
+	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response saveRoute(SaveRouteBody body) {
-		User user = md.getUserById(body.getUserId());
-		if (user != null) {
-			Route route = body.getRoute();
-			user.addRoute(route.getId(), route.getName());
-			Response.ResponseBuilder responseBuilder = Response.ok("Route added.");
+	public Response getRoute(@QueryParam("routeId") int routeId) {
+		Route route = md.getRouteById(routeId);
+		if (route != null) {
+			Response.ResponseBuilder responseBuilder = Response.ok(new RouteResponse("Route found.", route));
 			return addCorsHeaders(responseBuilder);
 		} else {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.NOT_FOUND)
-					.entity("User not found");
+					.entity("Route not found");
 			return addCorsHeaders(responseBuilder);
 		}
 	}

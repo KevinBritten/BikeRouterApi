@@ -10,11 +10,11 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/")
-public class Admin {
+public class AdminResource {
 
 	private MockDatabase md;
 
-	public Admin() {
+	public AdminResource() {
 		md = MockDatabase.getInstance();
 	}
 
@@ -23,12 +23,6 @@ public class Admin {
 				.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
 				.header("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept")
 				.build();
-	}
-
-	private Response addCorsHeadersJSON(Response.ResponseBuilder responseBuilder) {
-		return responseBuilder.header("Access-Control-Allow-Origin", "http://localhost:3000")
-				.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
-				.header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
 
 	@Path("signup/")
@@ -77,25 +71,5 @@ public class Admin {
 
 		}
 	}
-
-//	@Path("saveRoute/")
-//	@POST
-//	@Produces(MediaType.APPLICATION_JSON)
-////	@Consumes(MediaType.APPLICATION_JSON)
-////	public Response saveRoute(SaveRouteBody body) {
-//	public Response saveRoute() {
-//		return addCorsHeadersJSON(Response.ok());
-////		User user = md.getUserById(body.getUserId());
-////		if (user != null) {
-////			Route route = body.getRoute();
-////			user.addRoute(route.getId(), route.getName());
-////			Response.ResponseBuilder responseBuilder = Response.ok("Route added.");
-////			return addCorsHeaders(responseBuilder);
-////		} else {
-////			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.NOT_FOUND)
-////					.entity("User not found");
-////			return addCorsHeaders(responseBuilder);
-////		}
-//	}
 
 }

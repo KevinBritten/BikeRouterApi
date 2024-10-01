@@ -1,14 +1,14 @@
 package bikeRouterApi;
 
-public class SaveRouteBody {
+public class AddRouteBody {
 	private int userId;
 	private Route route;
 
-	public SaveRouteBody() {
+	public AddRouteBody() {
 
 	}
 
-	public SaveRouteBody(int userId, Route route) {
+	public AddRouteBody(int userId, Route route) {
 		this.userId = userId;
 		this.route = route;
 	}

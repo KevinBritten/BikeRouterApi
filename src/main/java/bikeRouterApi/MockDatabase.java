@@ -50,7 +50,9 @@ public class MockDatabase {
 	}
 
 	public Route getRouteById(int id) {
-		return routesTable.get(id);
+		if (routesTable.containsKey(id))
+			return routesTable.get(id);
+		return null;
 	}
 
 	public void addRoute(Route route) {
