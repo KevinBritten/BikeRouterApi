@@ -13,7 +13,7 @@ public class MongoDBConnection {
 		String connectionString = "mongodb://localhost:27017";
 		mongoClient = MongoClients.create(connectionString);
 
-		database = mongoClient.getDatabase("yourDatabase");
+		database = mongoClient.getDatabase("bikeRouter");
 	}
 
 	public static MongoDatabase getDatabase() {

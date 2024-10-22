@@ -1,5 +1,7 @@
 package bikeRouterApi;
 
+import com.mongodb.client.MongoDatabase;
+
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -12,10 +14,10 @@ import jakarta.ws.rs.core.Response;
 @Path("/")
 public class AdminResource {
 
-	private MockDatabase md;
+	private MongoDatabase db;
 
 	public AdminResource() {
-		md = MockDatabase.getInstance();
+		db = MongoDBConnection.getDatabase();
 	}
 
 	private Response addCorsHeaders(Response.ResponseBuilder responseBuilder) {
