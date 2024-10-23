@@ -2,9 +2,11 @@ package bikeRouterApi;
 
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class User {
-	private static int nextId = 1;
-	private int id;
+	@JsonProperty("_id")
+	private String id; // Map MongoDB's _id field to this property
 	private String username;
 	private String password;
 	private ArrayList<Integer> routeIds;
@@ -14,7 +16,6 @@ public class User {
 	};
 
 	public User(String username, String password) {
-		this.id = nextId++;
 		this.username = username;
 		this.password = password;
 		this.routeIds = new ArrayList<>();
@@ -22,8 +23,12 @@ public class User {
 
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getUsername() {
@@ -62,6 +67,6 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User{id=" + id + ", username='" + username + "', password='" + password + "'}";
+		return "User{username='" + username + "', password='" + password + "'}";
 	}
 }

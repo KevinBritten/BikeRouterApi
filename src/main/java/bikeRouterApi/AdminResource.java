@@ -1,5 +1,9 @@
 package bikeRouterApi;
 
+import org.bson.Document;
+import org.bson.types.ObjectId;
+
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import jakarta.ws.rs.FormParam;
@@ -31,18 +35,36 @@ public class AdminResource {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response signup(@FormParam("username") String username, @FormParam("password") String password) {
+		User user = new User(username, password);
+		MongoCollection<Document> collection = db.getCollection("users");
+		MongoDBService service = new MongoDBService(collection);
+		try {
+			service.insertUser(user);
+			Response.ResponseBuilder responseBuilder = Response.ok("Signup successful");
+			return addCorsHeaders(responseBuilder);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR);
+			return addCorsHeaders(responseBuilder);
+		}
 
-		md.addUser(new User(username, password));
-		Response.ResponseBuilder responseBuilder = Response.ok("Signup successful");
-		return addCorsHeaders(responseBuilder);
 	}
 
 	@Path("login/")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response login(@FormParam("username") String username, @FormParam("password") String password) {
-
-		User user = md.getUserByName(username);
+		MongoCollection<Document> collection = db.getCollection("users");
+		MongoDBService service = new MongoDBService(collection);
+		User user;
+		try {
+			user = service.getUserByName(username);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.UNAUTHORIZED)
+					.entity("Username not found.");
+			return addCorsHeaders(responseBuilder);
+		}
 		if (user != null && password.equals(user.getPassword())) {
 			String jsonResponse = "{\"message\":\"Login successful\",\"userId\":" + user.getId() + "}";
 			Response.ResponseBuilder responseBuilder = Response.ok(jsonResponse);
@@ -58,10 +80,25 @@ public class AdminResource {
 	@Path("user/")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response login(@QueryParam("userId") int userId) {
+	public Response user(@QueryParam("userId") String userId) {
 
-		User user = md.getUserById(userId);
-
+		MongoCollection<Document> collection = db.getCollection("users");
+		MongoDBService service = new MongoDBService(collection);
+		User user;
+		try {
+			ObjectId objectId = new ObjectId(userId); // Convert the string to ObjectId
+			user = service.getUserById(objectId); // Use ObjectId for querying
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST)
+					.entity("Invalid User Id format.");
+			return addCorsHeaders(responseBuilder);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.UNAUTHORIZED)
+					.entity("User Id not found.");
+			return addCorsHeaders(responseBuilder);
+		}
 		if (user != null) {
 			UserResponse jsonResponse = new UserResponse("User found.", user);
 			Response.ResponseBuilder responseBuilder = Response.ok(jsonResponse);
@@ -70,7 +107,6 @@ public class AdminResource {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.NOT_FOUND)
 					.entity("User not found with id " + userId);
 			return addCorsHeaders(responseBuilder);
-
 		}
 	}
 

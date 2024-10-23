@@ -42,7 +42,7 @@ public class MockDatabase {
 	}
 
 	public void addUser(User user) {
-		usersTable.put(user.getId(), user);
+
 	}
 
 	public Map<Integer, Route> getAllRoutes() {
