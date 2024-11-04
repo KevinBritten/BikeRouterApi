@@ -1,5 +1,8 @@
 package bikeRouterApi;
 
+import java.security.SecureRandom;
+import java.util.Base64;
+
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -66,9 +69,25 @@ public class AdminResource {
 			return addCorsHeaders(responseBuilder);
 		}
 		if (user != null && password.equals(user.getPassword())) {
+			SecureRandom random = new SecureRandom();
+			byte[] tokenBytes = new byte[32];
+			random.nextBytes(tokenBytes);
+			String authToken = Base64.getUrlEncoder().withoutPadding().encodeToString(tokenBytes);
+
+			user.setAuthToken(authToken);
+			try {
+				service.updateUser(new ObjectId(user.getId()), user);
+			} catch (Exception e) {
+				Response.ResponseBuilder responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+						.entity("Unable to set token");
+				return addCorsHeaders(responseBuilder);
+			}
+
 			String jsonResponse = "{\"message\":\"Login successful\",\"userId\":\"" + user.getId() + "\"}";
-			Response.ResponseBuilder responseBuilder = Response.ok(jsonResponse);
+			Response.ResponseBuilder responseBuilder = Response.ok(jsonResponse).header("Authorization",
+					"Bearer " + authToken);
 			return addCorsHeaders(responseBuilder);
+
 		} else {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.UNAUTHORIZED)
 					.entity("Invalid credentials");

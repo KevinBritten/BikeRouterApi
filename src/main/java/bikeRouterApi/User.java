@@ -11,6 +11,7 @@ public class User {
 	private String password;
 	private ArrayList<String> routeIds;
 	private ArrayList<String> routeNames;
+	private String authToken; // New field for authentication token
 
 	public User() {
 	};
@@ -53,6 +54,14 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getAuthToken() {
+		return authToken;
+	}
+
+	public void setAuthToken(String authToken) {
+		this.authToken = authToken;
 	}
 
 	public void addRoute(String id, String name) {
