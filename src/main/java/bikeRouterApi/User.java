@@ -9,7 +9,7 @@ public class User {
 	private String id; // Map MongoDB's _id field to this property
 	private String username;
 	private String password;
-	private ArrayList<Integer> routeIds;
+	private ArrayList<String> routeIds;
 	private ArrayList<String> routeNames;
 
 	public User() {
@@ -39,7 +39,7 @@ public class User {
 		return password;
 	}
 
-	public ArrayList<Integer> getRouteIds() {
+	public ArrayList<String> getRouteIds() {
 		return routeIds;
 	}
 
@@ -55,7 +55,7 @@ public class User {
 		this.password = password;
 	}
 
-	public void addRoute(int id, String name) {
+	public void addRoute(String id, String name) {
 		this.routeIds.add(id);
 		this.routeNames.add(name);
 	}

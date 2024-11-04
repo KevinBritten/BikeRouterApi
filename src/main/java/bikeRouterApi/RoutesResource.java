@@ -1,5 +1,9 @@
 package bikeRouterApi;
 
+import org.bson.Document;
+import org.bson.types.ObjectId;
+
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import jakarta.ws.rs.Consumes;
@@ -33,11 +37,40 @@ public class RoutesResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addRoute(AddRouteBody body) {
-		User user = md.getUserById(body.getUserId());
+		MongoCollection<Document> usersCollection = db.getCollection("users");
+		MongoDBService usersService = new MongoDBService(usersCollection);
+		User user = null;
+		ObjectId userId = new ObjectId(body.getUserId());
+		try {
+			userId = new ObjectId(body.getUserId()); // Convert the string to ObjectId
+			user = usersService.getUserById(userId); // Use ObjectId for querying
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST)
+					.entity("Invalid User Id format.");
+			return addCorsHeaders(responseBuilder);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if (user != null) {
+			MongoCollection<Document> routesCollection = db.getCollection("routes");
+			MongoDBService routesService = new MongoDBService(routesCollection);
 			Route route = body.getRoute();
-			md.addRoute(route);
+			try {
+				route.setId(routesService.addRoute(route).toString());
+			} catch (Exception e) {
+				Response.ResponseBuilder responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+						.entity("Unable to add route.");
+				return addCorsHeaders(responseBuilder);
+			}
 			user.addRoute(route.getId(), route.getName());
+			try {
+				usersService.updateUser(userId, user);
+			} catch (Exception e) {
+				Response.ResponseBuilder responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+						.entity("Unable to update user.");
+				return addCorsHeaders(responseBuilder);
+			}
 			Response.ResponseBuilder responseBuilder = Response.ok("Route added.");
 			return addCorsHeaders(responseBuilder);
 		} else {

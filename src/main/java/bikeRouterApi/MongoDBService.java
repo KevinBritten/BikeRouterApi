@@ -25,6 +25,17 @@ public class MongoDBService {
 		collection.insertOne(userDocument);
 	}
 
+	public void updateUser(ObjectId id, User updatedUser) throws Exception {
+		Map<String, Object> userMap = objectMapper.convertValue(updatedUser, Map.class);
+		userMap.remove("_id"); // Ensure MongoDB handles the _id field
+		Document updatedDocument = new Document(userMap);
+
+		Document query = new Document("_id", id);
+		Document update = new Document("$set", updatedDocument);
+
+		collection.updateOne(query, update);
+	}
+
 	public User getUserByName(String username) throws Exception {
 		Document query = new Document("username", username);
 		Document userDocument = collection.find(query).first();
@@ -46,6 +57,20 @@ public class MongoDBService {
 		}
 
 		return null;
+	}
+
+	// routes
+
+	public ObjectId addRoute(Route route) throws Exception {
+		// Convert Route to Document and insert it
+		Map<String, Object> routeMap = objectMapper.convertValue(route, Map.class);
+		routeMap.remove("_id"); // Ensure MongoDB sets the _id automatically
+		Document routeDocument = new Document(routeMap);
+		collection.insertOne(routeDocument);
+
+		// Get the ObjectId of the inserted route
+		return routeDocument.getObjectId("_id");
+
 	}
 
 }

@@ -2,14 +2,15 @@ package bikeRouterApi;
 
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Route {
-	private static int nextId = 1;
-	private int id;
+	@JsonProperty("_id")
+	private String id; // Map MongoDB's _id field to this property
 	private String name;
 	private ArrayList<Coord> path;
 
 	public Route() {
-		this.id = nextId++;
 		this.path = new ArrayList<>();
 	}
 
@@ -34,7 +35,11 @@ public class Route {
 		this.path = path;
 	}
 
-	public int getId() {
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getId() {
 		return id;
 	}
 

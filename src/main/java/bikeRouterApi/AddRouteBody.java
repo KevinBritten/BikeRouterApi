@@ -1,23 +1,23 @@
 package bikeRouterApi;
 
 public class AddRouteBody {
-	private int userId;
+	private String userId;
 	private Route route;
 
 	public AddRouteBody() {
 
 	}
 
-	public AddRouteBody(int userId, Route route) {
+	public AddRouteBody(String userId, Route route) {
 		this.userId = userId;
 		this.route = route;
 	}
 
-	public int getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(int userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
