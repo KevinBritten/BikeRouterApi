@@ -1,5 +1,7 @@
 package bikeRouterApi;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.bson.Document;
@@ -84,4 +86,25 @@ public class MongoDBService {
 		return null; // Return null if no route is found
 	}
 
+	public List<Route> getRoutesWithinSquare(double[][] squareCoordinates) throws Exception {
+		// Define the square as a GeoJSON Polygon
+		Document square = new Document("type", "Polygon").append("coordinates",
+				List.of(List.of(List.of(squareCoordinates[0][0], squareCoordinates[0][1]),
+						List.of(squareCoordinates[1][0], squareCoordinates[1][1]),
+						List.of(squareCoordinates[2][0], squareCoordinates[2][1]),
+						List.of(squareCoordinates[3][0], squareCoordinates[3][1]),
+						List.of(squareCoordinates[0][0], squareCoordinates[0][1]))));
+
+		// Query to find routes within the square
+		Document query = new Document("path", new Document("$geoIntersects", new Document("$geometry", square)));
+
+		// Fetch matching routes
+		List<Route> routes = new ArrayList<>();
+		for (Document routeDocument : collection.find(query)) {
+			Route route = objectMapper.convertValue(routeDocument, Route.class);
+			routes.add(route);
+		}
+
+		return routes;
+	}
 }
