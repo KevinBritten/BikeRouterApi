@@ -19,7 +19,8 @@ public class MongoDBService {
 
 	public void insertUser(User user) throws Exception {
 		Map<String, Object> userMap = objectMapper.convertValue(user, Map.class);
-		userMap.remove("id");
+		// remove id so mongo can set it automatically
+		userMap.remove("_id");
 		Document userDocument = new Document(userMap);
 		collection.insertOne(userDocument);
 	}
