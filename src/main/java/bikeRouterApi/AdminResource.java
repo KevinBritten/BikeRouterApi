@@ -66,7 +66,7 @@ public class AdminResource {
 			return addCorsHeaders(responseBuilder);
 		}
 		if (user != null && password.equals(user.getPassword())) {
-			String jsonResponse = "{\"message\":\"Login successful\",\"userId\":" + user.getId() + "}";
+			String jsonResponse = "{\"message\":\"Login successful\",\"userId\":\"" + user.getId() + "\"}";
 			Response.ResponseBuilder responseBuilder = Response.ok(jsonResponse);
 			return addCorsHeaders(responseBuilder);
 		} else {
