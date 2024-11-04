@@ -13,7 +13,7 @@ public class RestResponseFilter implements ContainerResponseFilter {
 	@Override
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
 			throws IOException {
-		responseContext.getHeaders().putSingle("Access-Control-Allow-Origin", "*"); // Or specify origin
+		responseContext.getHeaders().putSingle("Access-Control-Allow-Origin", "http://localhost:3000");
 		responseContext.getHeaders().putSingle("Access-Control-Allow-Credentials", "true");
 		responseContext.getHeaders().putSingle("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS");
 		responseContext.getHeaders().putSingle("Access-Control-Allow-Headers",

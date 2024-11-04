@@ -9,6 +9,7 @@ import org.bson.types.ObjectId;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+import jakarta.ws.rs.CookieParam;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -31,7 +32,7 @@ public class AdminResource {
 		return responseBuilder.header("Access-Control-Allow-Origin", "http://localhost:3000")
 				.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
 				.header("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept")
-				.build();
+				.header("Access-Control-Allow-Credentials", "true").build();
 	}
 
 	@Path("signup/")
@@ -84,8 +85,9 @@ public class AdminResource {
 			}
 
 			String jsonResponse = "{\"message\":\"Login successful\",\"userId\":\"" + user.getId() + "\"}";
-			Response.ResponseBuilder responseBuilder = Response.ok(jsonResponse).header("Authorization",
-					"Bearer " + authToken);
+			Response.ResponseBuilder responseBuilder = Response.ok(jsonResponse).header("Set-Cookie",
+					"authToken=" + authToken + "; Max-Age=3600; Path=/; HttpOnly; Secure; SameSite=Strict");
+
 			return addCorsHeaders(responseBuilder);
 
 		} else {
@@ -125,6 +127,57 @@ public class AdminResource {
 		} else {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.NOT_FOUND)
 					.entity("User not found with id " + userId);
+			return addCorsHeaders(responseBuilder);
+		}
+	}
+
+	@Path("getUserIdByToken")
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response getUserIdByToken(@CookieParam("authToken") String token) {
+		MongoCollection<Document> collection = db.getCollection("users");
+		AuthService service = new AuthService(collection);
+		Document user = service.getUserByToken(token);
+
+		if (user != null) {
+			String userId = user.getObjectId("_id").toHexString(); // Convert ObjectId to String
+			Response.ResponseBuilder responseBuilder = Response.ok(userId);
+			return addCorsHeaders(responseBuilder);
+		} else {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.NOT_FOUND)
+					.entity("Invalid token");
+			return addCorsHeaders(responseBuilder);
+		}
+	}
+
+	@Path("logout")
+	@POST
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response logout(@FormParam("userId") String userId) {
+		MongoCollection<Document> collection = db.getCollection("users");
+		MongoDBService service = new MongoDBService(collection);
+		User user;
+		try {
+			user = service.getUserById(new ObjectId(userId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.UNAUTHORIZED)
+					.entity("User ID not found.");
+			return addCorsHeaders(responseBuilder);
+		}
+
+		if (user != null) {
+			user.setAuthToken(null);
+		}
+		try {
+			service.updateUser(new ObjectId(user.getId()), user);
+			Response.ResponseBuilder responseBuilder = Response.ok("Logout successful.").header("Set-Cookie",
+					"authToken=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Strict");
+			return addCorsHeaders(responseBuilder);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+					.entity("Unable to logout.");
 			return addCorsHeaders(responseBuilder);
 		}
 	}
