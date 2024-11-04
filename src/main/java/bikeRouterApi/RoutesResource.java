@@ -17,11 +17,9 @@ import jakarta.ws.rs.core.Response;
 
 @Path("routes")
 public class RoutesResource {
-	private MockDatabase md;
 	private MongoDatabase db;
 
 	public RoutesResource() {
-		md = MockDatabase.getInstance();
 		db = MongoDBConnection.getDatabase();
 	}
 
@@ -83,8 +81,17 @@ public class RoutesResource {
 	@Path("getRoute")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getRoute(@QueryParam("routeId") int routeId) {
-		Route route = md.getRouteById(routeId);
+	public Response getRoute(@QueryParam("routeId") String routeId) {
+		MongoCollection<Document> routesCollection = db.getCollection("routes");
+		MongoDBService routesService = new MongoDBService(routesCollection);
+		Route route;
+		try {
+			route = routesService.getRouteById(new ObjectId(routeId));
+		} catch (Exception e) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+					.entity("Unable to find route.");
+			return addCorsHeaders(responseBuilder);
+		}
 		if (route != null) {
 			Response.ResponseBuilder responseBuilder = Response.ok(new RouteResponse("Route found.", route));
 			return addCorsHeaders(responseBuilder);

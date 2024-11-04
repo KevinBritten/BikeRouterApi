@@ -73,4 +73,15 @@ public class MongoDBService {
 
 	}
 
+	public Route getRouteById(ObjectId routeId) throws Exception {
+		Document query = new Document("_id", routeId);
+		Document routeDocument = collection.find(query).first();
+
+		if (routeDocument != null) {
+			return objectMapper.convertValue(routeDocument, Route.class);
+		}
+
+		return null; // Return null if no route is found
+	}
+
 }
