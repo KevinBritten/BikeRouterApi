@@ -23,13 +23,6 @@ public class RoutesResource {
 		db = MongoDBConnection.getDatabase();
 	}
 
-	private Response addCorsHeaders(Response.ResponseBuilder responseBuilder) {
-		return responseBuilder.header("Access-Control-Allow-Origin", "*")
-				.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
-				.header("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept")
-				.build();
-	}
-
 	@Path("addRoute/")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
@@ -44,9 +37,8 @@ public class RoutesResource {
 			user = usersService.getUserById(userId); // Use ObjectId for querying
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST)
-					.entity("Invalid User Id format.");
-			return addCorsHeaders(responseBuilder);
+			return Response.status(Response.Status.BAD_REQUEST).entity("Invalid User Id format.").build();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,24 +49,21 @@ public class RoutesResource {
 			try {
 				route.setId(routesService.addRoute(route).toString());
 			} catch (Exception e) {
-				Response.ResponseBuilder responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-						.entity("Unable to add route.");
-				return addCorsHeaders(responseBuilder);
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Unable to add route.").build();
+
 			}
 			user.addRoute(route.getId(), route.getName());
 			try {
 				usersService.updateUser(userId, user);
 			} catch (Exception e) {
-				Response.ResponseBuilder responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-						.entity("Unable to update user.");
-				return addCorsHeaders(responseBuilder);
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Unable to update user.").build();
+
 			}
-			Response.ResponseBuilder responseBuilder = Response.ok("Route added.");
-			return addCorsHeaders(responseBuilder);
+			return Response.ok("Route added.").build();
+
 		} else {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.NOT_FOUND)
-					.entity("User not found");
-			return addCorsHeaders(responseBuilder);
+			return Response.status(Response.Status.NOT_FOUND).entity("User not found").build();
+
 		}
 	}
 
@@ -88,17 +77,15 @@ public class RoutesResource {
 		try {
 			route = routesService.getRouteById(new ObjectId(routeId));
 		} catch (Exception e) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-					.entity("Unable to find route.");
-			return addCorsHeaders(responseBuilder);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Unable to find route.").build();
+
 		}
 		if (route != null) {
-			Response.ResponseBuilder responseBuilder = Response.ok(new RouteResponse("Route found.", route));
-			return addCorsHeaders(responseBuilder);
+			return Response.ok(new RouteResponse("Route found.", route)).build();
+
 		} else {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.NOT_FOUND)
-					.entity("Route not found");
-			return addCorsHeaders(responseBuilder);
+			return Response.status(Response.Status.NOT_FOUND).entity("Route not found").build();
+
 		}
 	}
 
