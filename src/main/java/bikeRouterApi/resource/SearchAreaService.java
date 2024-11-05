@@ -1,10 +1,13 @@
-package bikeRouterApi;
+package bikeRouterApi.resource;
 
 import org.bson.Document;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+import bikeRouterApi.database.MongoDBConnection;
+import bikeRouterApi.repository.MongoDBService;
+import bikeRouterApi.response.RouteListWrapper;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;

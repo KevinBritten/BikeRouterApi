@@ -1,4 +1,4 @@
-package bikeRouterApi;
+package bikeRouterApi.model;
 
 public class AddRouteBody {
 	private String userId;

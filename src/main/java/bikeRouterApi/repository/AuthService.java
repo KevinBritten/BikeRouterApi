@@ -1,4 +1,4 @@
-package bikeRouterApi;
+package bikeRouterApi.repository;
 
 import org.bson.Document;
 

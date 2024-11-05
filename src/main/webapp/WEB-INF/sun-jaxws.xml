@@ -2,7 +2,7 @@
 <endpoints xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime" version="2.0">
 	<endpoint 
 		name="BikeRouterApi"
-		implementation="bikeRouterApi.SearchAreaService"
+		implementation="bikeRouterApi.resource.SearchAreaService"
 		url-pattern="/ws/searchArea" 
 		/>
 </endpoints>

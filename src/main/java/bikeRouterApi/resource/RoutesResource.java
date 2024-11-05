@@ -1,4 +1,4 @@
-package bikeRouterApi;
+package bikeRouterApi.resource;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -6,6 +6,12 @@ import org.bson.types.ObjectId;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+import bikeRouterApi.database.MongoDBConnection;
+import bikeRouterApi.model.AddRouteBody;
+import bikeRouterApi.model.Route;
+import bikeRouterApi.model.User;
+import bikeRouterApi.repository.MongoDBService;
+import bikeRouterApi.response.RouteResponse;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;

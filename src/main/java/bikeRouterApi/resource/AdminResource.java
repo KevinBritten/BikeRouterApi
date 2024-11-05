@@ -1,4 +1,4 @@
-package bikeRouterApi;
+package bikeRouterApi.resource;
 
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -9,6 +9,11 @@ import org.bson.types.ObjectId;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+import bikeRouterApi.database.MongoDBConnection;
+import bikeRouterApi.model.User;
+import bikeRouterApi.repository.AuthService;
+import bikeRouterApi.repository.MongoDBService;
+import bikeRouterApi.response.UserResponse;
 import jakarta.ws.rs.CookieParam;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;

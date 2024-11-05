@@ -1,4 +1,4 @@
-package bikeRouterApi;
+package bikeRouterApi.repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,10 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import com.mongodb.client.MongoCollection;
+
+import bikeRouterApi.database.MongoObjectMapper;
+import bikeRouterApi.model.Route;
+import bikeRouterApi.model.User;
 
 public class MongoDBService {
 	private MongoCollection<Document> collection;

@@ -1,4 +1,4 @@
-package bikeRouterApi;
+package bikeRouterApi.filter;
 
 import java.io.IOException;
 

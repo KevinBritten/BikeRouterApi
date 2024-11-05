@@ -1,4 +1,4 @@
-package bikeRouterApi;
+package bikeRouterApi.model;
 
 import java.util.ArrayList;
 

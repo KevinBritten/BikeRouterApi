@@ -1,4 +1,6 @@
-package bikeRouterApi;
+package bikeRouterApi.response;
+
+import bikeRouterApi.model.Route;
 
 public class RouteResponse {
 	private String message;
