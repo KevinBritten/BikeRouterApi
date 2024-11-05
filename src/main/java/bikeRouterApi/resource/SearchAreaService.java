@@ -39,11 +39,8 @@ public class SearchAreaService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		return wrapper;
 	}
 
-	@WebMethod(operationName = "Hello")
-	public String displayHello(@WebParam(name = "Name") String name) {
-		return "Hello everyone from " + name;
-	}
 }

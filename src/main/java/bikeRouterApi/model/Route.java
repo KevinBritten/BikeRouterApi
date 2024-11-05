@@ -7,12 +7,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Route {
 	@JsonProperty("_id")
-	private String id; // Use ObjectId if MongoDB auto-generates IDs
+	private String id;
 	private String name;
-	private GeoJsonLineString path; // Define a GeoJsonLineString for geospatial queries
+	private GeoJsonLineString path;
 
 	public Route() {
-		// Default constructor
 	}
 
 	public Route(String name, List<double[]> coordinates) {
@@ -49,7 +48,6 @@ public class Route {
 		return "Route{id=" + id + ", name='" + name + "'}";
 	}
 
-	// Inner class to represent a GeoJSON LineString
 	public static class GeoJsonLineString {
 		private String type = "LineString";
 		private List<double[]> coordinates;

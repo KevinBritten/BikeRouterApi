@@ -38,35 +38,36 @@ public class RoutesResource {
 		MongoDBService usersService = new MongoDBService(usersCollection);
 		User user = null;
 		ObjectId userId = new ObjectId(body.getUserId());
+
 		try {
 			userId = new ObjectId(body.getUserId()); // Convert the string to ObjectId
 			user = usersService.getUserById(userId); // Use ObjectId for querying
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			return Response.status(Response.Status.BAD_REQUEST).entity("Invalid User Id format.").build();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		if (user != null) {
 			MongoCollection<Document> routesCollection = db.getCollection("routes");
 			MongoDBService routesService = new MongoDBService(routesCollection);
 			Route route = body.getRoute();
+
 			try {
 				route.setId(routesService.addRoute(route).toString());
 			} catch (Exception e) {
 				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Unable to add route.").build();
-
 			}
+
 			user.addRoute(route.getId(), route.getName());
 			try {
 				usersService.updateUser(userId, user);
 			} catch (Exception e) {
 				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Unable to update user.").build();
-
 			}
-			return Response.ok("Route added.").build();
 
+			return Response.ok("Route added.").build();
 		} else {
 			return Response.status(Response.Status.NOT_FOUND).entity("User not found").build();
 
@@ -84,14 +85,12 @@ public class RoutesResource {
 			route = routesService.getRouteById(new ObjectId(routeId));
 		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Unable to find route.").build();
-
 		}
+
 		if (route != null) {
 			return Response.ok(new RouteResponse("Route found.", route)).build();
-
 		} else {
 			return Response.status(Response.Status.NOT_FOUND).entity("Route not found").build();
-
 		}
 	}
 

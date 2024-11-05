@@ -25,7 +25,6 @@ public class MongoDBService {
 
 	public void insertUser(User user) throws Exception {
 		Map<String, Object> userMap = objectMapper.convertValue(user, Map.class);
-		// remove id so mongo can set it automatically
 		userMap.remove("_id");
 		Document userDocument = new Document(userMap);
 		collection.insertOne(userDocument);
@@ -33,7 +32,7 @@ public class MongoDBService {
 
 	public void updateUser(ObjectId id, User updatedUser) throws Exception {
 		Map<String, Object> userMap = objectMapper.convertValue(updatedUser, Map.class);
-		userMap.remove("_id"); // Ensure MongoDB handles the _id field
+		userMap.remove("_id");
 		Document updatedDocument = new Document(userMap);
 
 		Document query = new Document("_id", id);
@@ -68,13 +67,10 @@ public class MongoDBService {
 	// routes
 
 	public ObjectId addRoute(Route route) throws Exception {
-		// Convert Route to Document and insert it
 		Map<String, Object> routeMap = objectMapper.convertValue(route, Map.class);
 		routeMap.remove("_id"); // Ensure MongoDB sets the _id automatically
 		Document routeDocument = new Document(routeMap);
 		collection.insertOne(routeDocument);
-
-		// Get the ObjectId of the inserted route
 		return routeDocument.getObjectId("_id");
 
 	}
@@ -87,28 +83,22 @@ public class MongoDBService {
 			return objectMapper.convertValue(routeDocument, Route.class);
 		}
 
-		return null; // Return null if no route is found
+		return null;
 	}
 
 	public List<Route> getRoutesWithinSquare(double[][] squareCoordinates) throws Exception {
-		// Define the square as a GeoJSON Polygon
 		Document square = new Document("type", "Polygon").append("coordinates",
 				List.of(List.of(List.of(squareCoordinates[0][0], squareCoordinates[0][1]),
 						List.of(squareCoordinates[1][0], squareCoordinates[1][1]),
 						List.of(squareCoordinates[2][0], squareCoordinates[2][1]),
 						List.of(squareCoordinates[3][0], squareCoordinates[3][1]),
 						List.of(squareCoordinates[0][0], squareCoordinates[0][1]))));
-
-		// Query to find routes within the square
 		Document query = new Document("path", new Document("$geoIntersects", new Document("$geometry", square)));
-
-		// Fetch matching routes
 		List<Route> routes = new ArrayList<>();
 		for (Document routeDocument : collection.find(query)) {
 			Route route = objectMapper.convertValue(routeDocument, Route.class);
 			routes.add(route);
 		}
-
 		return routes;
 	}
 }

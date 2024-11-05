@@ -9,10 +9,8 @@ public class MongoDBConnection {
 	private static MongoDatabase database;
 
 	static {
-
 		String connectionString = "mongodb://localhost:27017";
 		mongoClient = MongoClients.create(connectionString);
-
 		database = mongoClient.getDatabase("bikeRouter");
 	}
 

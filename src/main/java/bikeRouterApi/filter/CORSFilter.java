@@ -25,8 +25,7 @@ public class CORSFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 
 		// Set CORS headers
-		response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000"); // Adjust as needed for specific
-																					// origins
+		response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
 		response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
 		response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 		response.setHeader("Access-Control-Allow-Credentials", "true");
@@ -37,11 +36,6 @@ public class CORSFilter implements Filter {
 			return; // Skip further processing for OPTIONS requests
 		}
 
-		chain.doFilter(req, res); // Continue the filter chain for other requests
-	}
-
-	@Override
-	public void destroy() {
-		// Optional: Cleanup filter resources
+		chain.doFilter(req, res);
 	}
 }

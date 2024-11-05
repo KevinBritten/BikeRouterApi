@@ -41,12 +41,10 @@ public class AdminResource {
 		MongoDBService service = new MongoDBService(collection);
 		try {
 			service.insertUser(user);
-			;
 			return Response.ok("Signup successful").build();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-
 		}
 
 	}
@@ -69,25 +67,20 @@ public class AdminResource {
 			byte[] tokenBytes = new byte[32];
 			random.nextBytes(tokenBytes);
 			String authToken = Base64.getUrlEncoder().withoutPadding().encodeToString(tokenBytes);
-
 			user.setAuthToken(authToken);
 			try {
 				service.updateUser(new ObjectId(user.getId()), user);
 			} catch (Exception e) {
 				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Unable to set token").build();
-
 			}
 
 			String jsonResponse = "{\"message\":\"Login successful\",\"userId\":\"" + user.getId() + "\"}";
-
 			return Response.ok(jsonResponse)
 					.header("Set-Cookie",
 							"authToken=" + authToken + "; Max-Age=3600; Path=/; HttpOnly; Secure; SameSite=Strict")
 					.build();
-
 		} else {
 			return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid credentials").build();
-
 		}
 	}
 
@@ -95,29 +88,26 @@ public class AdminResource {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response user(@FormParam("userId") String userId) {
-
 		MongoCollection<Document> collection = db.getCollection("users");
 		MongoDBService service = new MongoDBService(collection);
 		User user;
+
 		try {
 			ObjectId objectId = new ObjectId(userId); // Convert the string to ObjectId
 			user = service.getUserById(objectId); // Use ObjectId for querying
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			return Response.status(Response.Status.BAD_REQUEST).entity("Invalid User Id format.").build();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(Response.Status.UNAUTHORIZED).entity("User Id not found.").build();
-
 		}
+
 		if (user != null) {
 			UserResponse jsonResponse = new UserResponse("User found.", user);
 			return Response.ok(jsonResponse).build();
-
 		} else {
 			return Response.status(Response.Status.NOT_FOUND).entity("User not found with id " + userId).build();
-
 		}
 	}
 
@@ -135,7 +125,6 @@ public class AdminResource {
 
 		} else {
 			return Response.status(Response.Status.NOT_FOUND).entity("Invalid token").build();
-
 		}
 	}
 
@@ -151,21 +140,19 @@ public class AdminResource {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(Response.Status.UNAUTHORIZED).entity("User ID not found.").build();
-
 		}
 
 		if (user != null) {
 			user.setAuthToken(null);
 		}
+
 		try {
 			service.updateUser(new ObjectId(user.getId()), user);
 			return Response.ok("Logout successful.")
 					.header("Set-Cookie", "authToken=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Strict").build();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Unable to logout.").build();
-
 		}
 	}
 

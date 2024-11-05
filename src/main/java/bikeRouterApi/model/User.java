@@ -6,12 +6,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class User {
 	@JsonProperty("_id")
-	private String id; // Map MongoDB's _id field to this property
+	private String id;
 	private String username;
 	private String password;
 	private ArrayList<String> routeIds;
 	private ArrayList<String> routeNames;
-	private String authToken; // New field for authentication token
+	private String authToken;
 
 	public User() {
 	};

@@ -14,10 +14,8 @@ public class AuthService {
 
 	public Document getUserByToken(String authHeader) {
 		String token = authHeader.startsWith("Bearer ") ? authHeader.substring("Bearer ".length()) : authHeader;
-
 		Document query = new Document("authToken", token);
 		Document user = collection.find(query).first();
-
 		return user;
 	}
 
